@@ -12,6 +12,7 @@
 # Log files
 *.log
 
+../
 # Maven build artifacts
 target/
 pom.xml.tag
@@ -50,6 +51,7 @@ spark-warehouse/
 
 # Processed data directories
 data/processed/*
+data/raw/*
 data/models/*
 !data/processed/.gitkeep
 !data/models/.gitkeep
@@ -58,3 +60,8 @@ data/models/*
 test.txt
 *.tmp
 *.temp
+
+# Data files (too large for GitHub)
+patient-readmission-prediction/data/
+*.csv
+data/
