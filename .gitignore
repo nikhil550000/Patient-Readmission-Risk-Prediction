@@ -1,0 +1,67 @@
+# CSV Data Files
+*.csv
+
+# Large data files
+*.parquet
+*.json
+*.xml
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+../
+# Maven build artifacts
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE Files
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+
+# OS Files
+.DS_Store
+Thumbs.db
+*~
+
+# Spark Files
+metastore_db/
+derby.log
+spark-warehouse/
+
+# Model artifacts (keep metadata, exclude large model files)
+*.model
+*.bin
+
+# Processed data directories
+data/processed/*
+data/raw/*
+data/models/*
+!data/processed/.gitkeep
+!data/models/.gitkeep
+
+# Test files
+test.txt
+*.tmp
+*.temp
+
+# Data files (too large for GitHub)
+patient-readmission-prediction/data/
+*.csv
+data/
