@@ -12,13 +12,13 @@ import org.apache.spark.sql.SparkSession;
  * Corresponds to Python Step 1: Loading core tables
  */
 public class DataLoader {
-    
+
     private final SparkSession spark;
-    
+
     public DataLoader() {
         this.spark = SparkConfig.getSparkSession();
     }
-    
+
     /**
      * Load ICUSTAYS table
      */
@@ -28,11 +28,11 @@ public class DataLoader {
                 .option("header", "true")
                 .option("inferSchema", "true")
                 .csv(AppConfig.getIcuStaysFile());
-        
+
         System.out.println("✓ ICUSTAYS loaded: " + df.count() + " rows");
         return df;
     }
-    
+
     /**
      * Load PATIENTS table
      */
@@ -42,11 +42,11 @@ public class DataLoader {
                 .option("header", "true")
                 .option("inferSchema", "true")
                 .csv(AppConfig.getPatientsFile());
-        
+
         System.out.println("✓ PATIENTS loaded: " + df.count() + " rows");
         return df;
     }
-    
+
     /**
      * Load ADMISSIONS table
      */
@@ -56,11 +56,11 @@ public class DataLoader {
                 .option("header", "true")
                 .option("inferSchema", "true")
                 .csv(AppConfig.getAdmissionsFile());
-        
+
         System.out.println("✓ ADMISSIONS loaded: " + df.count() + " rows");
         return df;
     }
-    
+
     /**
      * Load LABEVENTS table (large file - may take time)
      */
@@ -70,11 +70,11 @@ public class DataLoader {
                 .option("header", "true")
                 .option("inferSchema", "true")
                 .csv(AppConfig.getLabEventsFile());
-        
+
         System.out.println("✓ LABEVENTS loaded: " + df.count() + " rows");
         return df;
     }
-    
+
     /**
      * Load D_LABITEMS dictionary
      */
@@ -84,28 +84,28 @@ public class DataLoader {
                 .option("header", "true")
                 .option("inferSchema", "true")
                 .csv(AppConfig.getLabItemsFile());
-        
+
         System.out.println("✓ D_LABITEMS loaded: " + df.count() + " rows");
         return df;
     }
-    
+
     /**
      * Load all core tables at once
      */
     public MimicData loadAllData() {
         System.out.println("\n=== Loading Core MIMIC-III Tables ===\n");
-        
+
         MimicData data = new MimicData();
         data.icuStays = loadIcuStays();
         data.patients = loadPatients();
         data.admissions = loadAdmissions();
         data.labEvents = loadLabEvents();
         data.labItems = loadLabItems();
-        
+
         System.out.println("\n✓ All tables loaded successfully!\n");
         return data;
     }
-    
+
     /**
      * Container class for all MIMIC-III datasets
      */

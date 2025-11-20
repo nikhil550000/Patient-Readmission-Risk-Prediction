@@ -1,0 +1,100 @@
+.history-container {
+  max-width: 1400px;
+}
+
+.history-table {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f9fafb;
+}
+
+th {
+  padding: 16px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+td {
+  padding: 16px;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 14px;
+  color: #333;
+}
+
+tr:hover {
+  background: #f9fafb;
+}
+
+.date-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+}
+
+.risk-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.risk-low {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.risk-medium {
+  background: #fed7aa;
+  color: #ea580c;
+}
+
+.risk-high {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.probability-cell {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.prediction-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.will-readmit {
+  color: #dc2626;
+}
+
+.no-readmit {
+  color: #059669;
+}
+
+.no-data {
+  background: white;
+  padding: 60px 20px;
+  text-align: center;
+  border-radius: 10px;
+  color: #999;
+}
