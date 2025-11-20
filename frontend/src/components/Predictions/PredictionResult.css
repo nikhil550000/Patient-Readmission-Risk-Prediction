@@ -1,0 +1,195 @@
+.prediction-result-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background: #f9fafb;
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.result-card {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.result-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.result-header h2 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.result-header p {
+  color: #666;
+  font-size: 14px;
+}
+
+.result-main {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.prediction-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.prediction-badge.high-risk {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+}
+
+.prediction-badge.low-risk {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #059669;
+}
+
+.prediction-badge h3 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.probability-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.probability-section h4 {
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+}
+
+.probability-bar-container {
+  width: 100%;
+  height: 50px;
+  background: #f3f4f6;
+  border-radius: 25px;
+  overflow: hidden;
+  position: relative;
+}
+
+.probability-bar {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.5s ease;
+  border-radius: 25px;
+}
+
+.probability-text {
+  color: white;
+  font-weight: 700;
+  font-size: 18px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.risk-level-badge {
+  align-self: flex-start;
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.probability-breakdown {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.breakdown-item {
+  background: #f9fafb;
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.breakdown-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #666;
+  font-size: 14px;
+}
+
+.breakdown-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+}
+
+.result-recommendations {
+  margin-top: 30px;
+  padding: 25px;
+  background: #f0f9ff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 8px;
+}
+
+.result-recommendations h4 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  color: #1e40af;
+  margin-bottom: 15px;
+}
+
+.result-recommendations ul {
+  list-style: none;
+  padding: 0;
+}
+
+.result-recommendations li {
+  padding: 8px 0;
+  color: #334155;
+  font-size: 14px;
+  position: relative;
+  padding-left: 20px;
+}
+
+.result-recommendations li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #3b82f6;
+  font-weight: 700;
+}
