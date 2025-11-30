@@ -2,6 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useState } from 'react';
 import { authService } from './services/auth';
 import Login from './components/Auth/Login';
+import PatientList from './components/Patients/PatientList';
+import PredictionForm from './components/Predictions/PredictionForm';
+import PredictionHistory from './components/Predictions/PredictionHistory';
 import './App.css';
 
 // Dashboard Overview Content
@@ -24,56 +27,25 @@ const DashboardContent = () => (
   </div>
 );
 
-// Patients Page Placeholder
-const PatientsContent = () => (
-  <div>
-    <h1 style={{ color: '#333' }}>Patient Management</h1>
-    <div style={{ background: 'white', padding: '40px', borderRadius: '10px', marginTop: '20px', textAlign: 'center' }}>
-      <p style={{ fontSize: '18px', color: '#666' }}>Patient list will appear here</p>
-      <p style={{ fontSize: '14px', color: '#999', marginTop: '10px' }}>Connect to API endpoint: GET /api/v1/patients</p>
-    </div>
-  </div>
-);
-
-// Prediction Page Placeholder
-const PredictContent = () => (
-  <div>
-    <h1 style={{ color: '#333' }}>Make Prediction</h1>
-    <div style={{ background: 'white', padding: '40px', borderRadius: '10px', marginTop: '20px', textAlign: 'center' }}>
-      <p style={{ fontSize: '18px', color: '#666' }}>Prediction form will appear here</p>
-      <p style={{ fontSize: '14px', color: '#999', marginTop: '10px' }}>POST /api/v1/predictions/predict</p>
-    </div>
-  </div>
-);
-
-// History Page Placeholder
-const HistoryContent = () => (
-  <div>
-    <h1 style={{ color: '#333' }}>Prediction History</h1>
-    <div style={{ background: 'white', padding: '40px', borderRadius: '10px', marginTop: '20px', textAlign: 'center' }}>
-      <p style={{ fontSize: '18px', color: '#666' }}>Prediction history will appear here</p>
-      <p style={{ fontSize: '14px', color: '#999', marginTop: '10px' }}>GET /api/v1/predictions/recent</p>
-    </div>
-  </div>
-);
-
 // Users Page Placeholder
 const UsersContent = () => (
   <div>
     <h1 style={{ color: '#333' }}>User Management</h1>
     <div style={{ background: 'white', padding: '40px', borderRadius: '10px', marginTop: '20px', textAlign: 'center' }}>
-      <p style={{ fontSize: '18px', color: '#666' }}>User management will appear here</p>
-      <p style={{ fontSize: '14px', color: '#999', marginTop: '10px' }}>Admin only feature</p>
+      <p style={{ fontSize: '18px', color: '#666' }}>User management features</p>
+      <p style={{ fontSize: '14px', color: '#999', marginTop: '10px' }}>Admin only - manage doctors, staff, and patient users</p>
     </div>
   </div>
 );
 
 // Complete Dashboard Layout with Navigation
+// Complete Dashboard Layout with Navigation - FIXED LAYOUT
 const DashboardLayout = () => {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const user = authService.getCurrentUser();
 
   const handleLogout = () => {
+    localStorage.clear();
     authService.logout();
     window.location.href = '/login';
   };
@@ -90,17 +62,29 @@ const DashboardLayout = () => {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8f9fa' }}>
+    <div style={{ 
+      display: 'flex', 
+      minHeight: '100vh',
+      width: '100vw',
+      background: '#f8f9fa',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
       {/* Sidebar */}
       <aside style={{
         width: '260px',
+        minWidth: '260px',
         background: 'linear-gradient(180deg, #667eea 0%, #764ba2 100%)',
         color: 'white',
         padding: '20px',
         position: 'fixed',
         height: '100vh',
+        left: 0,
+        top: 0,
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        zIndex: 1000,
+        overflowY: 'auto'
       }}>
         <div>
           <h2 style={{ marginBottom: '5px', fontSize: '20px' }}>Healthcare AI</h2>
@@ -121,16 +105,17 @@ const DashboardLayout = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '10px',
-                  transition: 'background 0.2s'
+                  transition: 'background 0.2s',
+                  cursor: 'pointer'
                 }}
                 onMouseEnter={(e) => {
                   if (currentPage !== item.id) {
-                    e.target.style.background = 'rgba(255,255,255,0.1)';
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (currentPage !== item.id) {
-                    e.target.style.background = 'transparent';
+                    e.currentTarget.style.background = 'transparent';
                   }
                 }}
               >
@@ -173,17 +158,27 @@ const DashboardLayout = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
-      <div style={{ marginLeft: '260px', flex: 1, padding: '30px' }}>
+      {/* Main Content - COMPLETELY FIXED */}
+      <main style={{ 
+        marginLeft: '260px',
+        width: 'calc(100vw - 260px)',
+        minHeight: '100vh',
+        padding: '30px',
+        background: '#f8f9fa',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        boxSizing: 'border-box'
+      }}>
         {currentPage === 'dashboard' && <DashboardContent />}
-        {currentPage === 'patients' && <PatientsContent />}
-        {currentPage === 'predict' && <PredictContent />}
-        {currentPage === 'history' && <HistoryContent />}
+        {currentPage === 'patients' && <PatientList />}
+        {currentPage === 'predict' && <PredictionForm />}
+        {currentPage === 'history' && <PredictionHistory />}
         {currentPage === 'users' && <UsersContent />}
-      </div>
+      </main>
     </div>
   );
 };
+
 
 // Auth check component
 const PrivateRoute = ({ children }) => {
