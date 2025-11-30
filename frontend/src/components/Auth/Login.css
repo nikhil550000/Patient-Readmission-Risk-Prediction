@@ -1,10 +1,16 @@
 .login-container {
   min-height: 100vh;
+  width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .login-box {
@@ -14,6 +20,7 @@
   padding: 40px;
   width: 100%;
   max-width: 450px;
+  z-index: 10;
 }
 
 .login-header {
@@ -56,6 +63,8 @@
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.3s;
+  color: #333;
+  background: white;
 }
 
 .form-group input:focus {
