@@ -45,4 +45,6 @@ public interface PredictionRepository extends JpaRepository<Prediction, Long> {
 
     // Get recent predictions for a patient
     List<Prediction> findTop5ByPatientIdOrderByCreatedAtDesc(Long patientId);
+
+    List<Prediction> findByPatientIdOrderByCreatedAtDesc(Long patientId);
 }

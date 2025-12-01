@@ -205,6 +205,13 @@ public class PredictionService {
     }
 
     /**
+     * Get predictions for a specific patient
+     */
+    public List<Prediction> getPredictionsByPatientId(Long patientId) {
+        return predictionRepository.findByPatientIdOrderByCreatedAtDesc(patientId);
+    }
+
+    /**
      * Calculate risk level based on probability
      */
     private String calculateRiskLevel(double probability) {
