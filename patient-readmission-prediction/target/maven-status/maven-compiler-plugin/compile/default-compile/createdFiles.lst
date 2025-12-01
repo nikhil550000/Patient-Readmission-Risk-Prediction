@@ -11,6 +11,7 @@ com/healthcare/readmission/model/repository/PredictionRepository.class
 com/healthcare/readmission/audit/service/AuditLogService.class
 com/healthcare/readmission/audit/filter/AuditLoggingFilter.class
 com/healthcare/readmission/auth/dto/LoginResponse.class
+com/healthcare/readmission/auth/controller/AuthController$RegisterRequest.class
 com/healthcare/readmission/audit/entity/AuditLog.class
 com/healthcare/readmission/dto/PatientData.class
 com/healthcare/readmission/controller/PatientController$SuccessResponse.class

@@ -2,6 +2,8 @@ package com.healthcare.readmission.auth.controller;
 
 import com.healthcare.readmission.auth.dto.LoginRequest;
 import com.healthcare.readmission.auth.dto.LoginResponse;
+import com.healthcare.readmission.auth.entity.User;
+import com.healthcare.readmission.auth.service.UserService;
 import com.healthcare.readmission.auth.jwt.JwtTokenProvider;
 import com.healthcare.readmission.audit.service.AuditService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +13,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
- * Authentication REST API Controller
+ * Authentication REST API Controller - DATABASE INTEGRATED
  */
 @RestController
 @RequestMapping("/api/v1/auth")
-// @CrossOrigin(origins = "*")
 public class AuthController {
 
     @Autowired
@@ -26,9 +28,11 @@ public class AuthController {
     @Autowired
     private AuditService auditService;
 
+    @Autowired
+    private UserService userService; // ADDED DATABASE SERVICE
+
     /**
-     * Login endpoint - authenticate user and return JWT token
-     * POST /api/v1/auth/login
+     * Login endpoint - authenticate user from DATABASE and return JWT token
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
@@ -44,13 +48,12 @@ public class AuthController {
                         .body(Map.of("error", "Password is required"));
             }
 
-            // TODO: In production, validate against database
-            // For demo purposes, accept specific test credentials
-            boolean isValidUser = authenticateUser(
+            // AUTHENTICATE AGAINST DATABASE
+            boolean authenticated = userService.authenticate(
                     loginRequest.getUsername(),
                     loginRequest.getPassword());
 
-            if (!isValidUser) {
+            if (!authenticated) {
                 auditService.logAudit(
                         loginRequest.getUsername(),
                         "LOGIN_FAILED",
@@ -63,20 +66,37 @@ public class AuthController {
                         .body(Map.of("error", "Invalid username or password"));
             }
 
-            // Generate JWT token
-            String token = jwtTokenProvider.generateToken(loginRequest.getUsername());
+            // GET USER FROM DATABASE
+            Optional<User> userOpt = userService.findByUsername(loginRequest.getUsername());
+            if (userOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "User not found"));
+            }
 
-            // Create response
-            LoginResponse response = new LoginResponse(token, loginRequest.getUsername());
+            User user = userOpt.get();
+
+            // Generate JWT token WITH ROLE
+            String token = jwtTokenProvider.generateToken(user.getUsername(), user.getRole());
+
+            // Update last login time in database
+            userService.updateLastLogin(user.getUsername());
+
+            // Create response WITH ALL USER INFO
+            LoginResponse response = new LoginResponse();
+            response.setToken(token);
+            response.setUsername(user.getUsername());
+            response.setRole(user.getRole());
+            response.setFullName(user.getFullName());
+            response.setUserId(user.getId());
 
             // Log successful login
             auditService.logAudit(
-                    loginRequest.getUsername(),
+                    user.getUsername(),
                     "LOGIN_SUCCESS",
                     "/api/v1/auth/login",
                     "POST",
                     200,
-                    "User logged in successfully");
+                    "User logged in successfully - Role: " + user.getRole());
 
             return ResponseEntity.ok(response);
 
@@ -95,8 +115,37 @@ public class AuthController {
     }
 
     /**
+     * Register new user
+     */
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        try {
+            User user = userService.createUser(
+                    request.getUsername(),
+                    request.getPassword(),
+                    request.getEmail(),
+                    request.getRole() != null ? request.getRole() : "PATIENT",
+                    request.getFullName());
+
+            auditService.logAudit(
+                    request.getUsername(),
+                    "USER_REGISTERED",
+                    "/api/v1/auth/register",
+                    "POST",
+                    201,
+                    "New user registered - Role: " + user.getRole());
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Map.of("message", "User registered successfully", "userId", user.getId()));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
      * Validate JWT token
-     * GET /api/v1/auth/validate
      */
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String authHeader) {
@@ -111,9 +160,12 @@ public class AuthController {
 
             if (isValid) {
                 String username = jwtTokenProvider.getUsernameFromToken(token);
+                String role = jwtTokenProvider.getRoleFromToken(token);
+
                 Map<String, Object> response = new HashMap<>();
                 response.put("valid", true);
                 response.put("username", username);
+                response.put("role", role);
                 return ResponseEntity.ok(response);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -127,8 +179,7 @@ public class AuthController {
     }
 
     /**
-     * Logout endpoint (optional - JWT is stateless)
-     * POST /api/v1/auth/logout
+     * Logout endpoint
      */
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -154,20 +205,53 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
-    /**
-     * Demo user authentication
-     * In production, validate against database with hashed passwords
-     */
-    private boolean authenticateUser(String username, String password) {
-        // Demo credentials for testing
-        // TODO: Replace with database lookup and password hashing (BCrypt)
+    // Inner class for register request
+    static class RegisterRequest {
+        private String username;
+        private String password;
+        private String email;
+        private String role;
+        private String fullName;
 
-        Map<String, String> demoUsers = new HashMap<>();
-        demoUsers.put("admin", "admin123");
-        demoUsers.put("doctor", "doctor123");
-        demoUsers.put("user", "user123");
+        // Getters and setters
+        public String getUsername() {
+            return username;
+        }
 
-        return demoUsers.containsKey(username) &&
-                demoUsers.get(username).equals(password);
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+
+        public String getFullName() {
+            return fullName;
+        }
+
+        public void setFullName(String fullName) {
+            this.fullName = fullName;
+        }
     }
 }

@@ -8,9 +8,12 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * JWT Token Provider for generating and validating JWT tokens
+ * UPDATED: Now includes role-based authentication
  */
 @Component
 public class JwtTokenProvider {
@@ -30,13 +33,24 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Generate JWT token for a user
+     * Generate JWT token for a user (backward compatibility)
      */
     public String generateToken(String username) {
+        return generateToken(username, "USER");
+    }
+
+    /**
+     * Generate JWT token with username and role
+     */
+    public String generateToken(String username, String role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
 
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role);
+
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
@@ -55,6 +69,30 @@ public class JwtTokenProvider {
                 .getBody();
 
         return claims.getSubject();
+    }
+
+    /**
+     * Get role from JWT token
+     */
+    public String getRoleFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("role", String.class);
+    }
+
+    /**
+     * Get all claims from token
+     */
+    private Claims getClaimsFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     /**

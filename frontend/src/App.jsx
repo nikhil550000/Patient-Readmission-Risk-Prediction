@@ -39,7 +39,6 @@ const UsersContent = () => (
 );
 
 // Complete Dashboard Layout with Navigation
-// Complete Dashboard Layout with Navigation - FIXED LAYOUT
 const DashboardLayout = () => {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const user = authService.getCurrentUser();
@@ -50,16 +49,35 @@ const DashboardLayout = () => {
     window.location.href = '/login';
   };
 
-  const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-    { id: 'patients', label: 'Patients', icon: '👥' },
-    { id: 'predict', label: 'Make Prediction', icon: '🔮' },
-    { id: 'history', label: 'Prediction History', icon: '📋' },
+  // Define navigation items based on role
+  // Define navigation items based on role
+const getNavItems = () => {
+  const baseItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: '📊', roles: ['ADMIN', 'DOCTOR', 'PATIENT'] }
   ];
 
-  if (user?.role === 'ADMIN') {
-    navItems.push({ id: 'users', label: 'User Management', icon: '⚙️' });
+  // Add role-specific items
+  if (user?.role === 'ADMIN' || user?.role === 'DOCTOR') {
+    baseItems.push(
+      { id: 'patients', label: 'Patients', icon: '👥', roles: ['ADMIN', 'DOCTOR'] },
+      { id: 'predict', label: 'Make Prediction', icon: '🔮', roles: ['ADMIN', 'DOCTOR'] },
+      { id: 'history', label: 'Prediction History', icon: '📋', roles: ['ADMIN', 'DOCTOR'] }
+    );
   }
+
+  if (user?.role === 'PATIENT') {
+    baseItems.push(
+      { id: 'history', label: 'My Predictions', icon: '📋', roles: ['PATIENT'] }
+    );
+  }
+
+  // REMOVED: User Management menu item completely
+
+  return baseItems.filter(item => item.roles.includes(user?.role));
+};
+
+
+  const navItems = getNavItems();
 
   return (
     <div style={{ 
@@ -158,7 +176,7 @@ const DashboardLayout = () => {
         </div>
       </aside>
 
-      {/* Main Content - COMPLETELY FIXED */}
+      {/* Main Content */}
       <main style={{ 
         marginLeft: '260px',
         width: 'calc(100vw - 260px)',
